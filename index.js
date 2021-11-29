@@ -16,8 +16,26 @@ bot.on('message', (ctx) => {
         })
         .then((file) => NodeID3.read(file.data))
         .then(fileInfo => {
+          const remixLabel = fileInfo.title.toLowerCase().includes('remix')
+            ? '\n🎛 #REMIX'
+            : '';
+
+          const bestLabel = ctx.update.message.caption?.includes('/best')
+            ? '\n🔥#BEST'
+            : '';
+
+          const matchRemixerArtist = fileInfo.title.match(/\((.*?)\)/gi);
+
+          const remixerArtist = matchRemixerArtist
+            ? matchRemixerArtist[0]
+              .replaceAll(/\(|\)/gi, '')
+              .split(/\s|, |\&|feat|feat./)
+              .filter(word => word.toLowerCase() !== 'remix')
+            : [];
+
           const artists = fileInfo.artist
-            .split(/\&|feat|feat./)
+            .split(/\&|feat|feat.|, /)
+            .concat(remixerArtist)
             .map(artist => `#${artist.trim().replaceAll(/\W|\s/gi, '')}`)
             .join(' ');
 
@@ -26,7 +44,7 @@ bot.on('message', (ctx) => {
             : '';
 
           ctx.telegram.sendAudio(ctx.chat.id, ctx.update.message.audio.file_id, {
-            caption: `Исполнитель: ${artists}${genre}`,
+            caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
           });
         });
     });
