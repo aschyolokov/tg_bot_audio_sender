@@ -6,6 +6,23 @@ require('dotenv').config();
 
 const bot = new Telegraf(process.env.TG_BOT_TOKEN);
 
+const getGenre = (genre) => {
+  let result = '';
+
+  switch (genre) {
+    case '(18)':
+      result = 'Techno';
+      break;
+    case '(127)':
+      result = 'DrumBass';
+      break;
+    default:
+      result = genre;
+  }
+
+  return result.split(/\s|\&/).join('');
+};
+
 bot.on('message', (ctx) => {
   ctx.telegram
     .getFileLink(ctx.update.message.audio.file_id)
@@ -40,7 +57,7 @@ bot.on('message', (ctx) => {
             .join(' ');
 
           const genre = fileInfo.genre
-            ? `\nСтиль: #${fileInfo.genre.split(' ').join('')}`
+            ? `\nСтиль: #${getGenre(fileInfo.genre)}`
             : '';
 
           ctx.telegram.sendAudio(ctx.chat.id, ctx.update.message.audio.file_id, {
