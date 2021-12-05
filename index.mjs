@@ -1,8 +1,9 @@
-const axios = require('axios').default;
-const { Telegraf } = require("telegraf");
-const NodeID3 = require('node-id3');
+import axios from 'axios';
+import { Telegraf } from 'telegraf';
+import NodeID3 from 'node-id3';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 const bot = new Telegraf(process.env.TG_BOT_TOKEN);
 
