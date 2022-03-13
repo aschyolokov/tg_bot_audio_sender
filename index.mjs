@@ -24,48 +24,74 @@ const getGenre = (genre) => {
   return result.split(/\s|\&/).join('');
 };
 
+const launchBot = () => {
+  bot
+    .launch()
+    .then(() => console.log('Бот запущен!'))
+    .catch((e) => console.log(`Бот не запущен. Произошла ошибка: ${e.message}`));
+};
+
+const getRemixLabel = (fileInfo) => fileInfo.title.toLowerCase().includes('remix')
+  ? '\n🎛 #REMIX'
+  : '';
+
+const getBestLabel = (ctx) => ctx.update.message.caption?.includes('/best')
+  ? '\n🔥#BEST'
+  : '';
+
+const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
+  ? matchRemixerArtist[0]
+    .replaceAll(/\(|\)/gi, '')
+    .split(/\s|, |\&|feat|feat./)
+    .filter(word => word.toLowerCase() !== 'remix')
+  : [];
+
+const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
+  .split(/\&|feat|feat.|, /)
+  .concat(remixerArtist)
+  .map(artist => `#${artist.trim().replaceAll(/\W|\s/gi, '')}`)
+  .join(' ');
+
 bot.on('message', (ctx) => {
-  ctx.telegram
-    .getFileLink(ctx.update.message.audio.file_id)
-    .then(res => {
-      axios
-        .get(res.href, {
-          responseType: "arraybuffer",
-        })
-        .then((file) => NodeID3.read(file.data))
-        .then(fileInfo => {
-          const remixLabel = fileInfo.title.toLowerCase().includes('remix')
-            ? '\n🎛 #REMIX'
-            : '';
+  if (ctx.update.message.text === '/start') {
+    ctx.telegram.sendMessage(ctx.chat.id, 'Добавьте аудио файлы.');
+    return;
+  }
 
-          const bestLabel = ctx.update.message.caption?.includes('/best')
-            ? '\n🔥#BEST'
-            : '';
+  if (!ctx.update.message.audio) {
+    ctx.telegram.sendMessage(ctx.chat.id, 'Неверная команда');
+    return;
+  }
 
-          const matchRemixerArtist = fileInfo.title.match(/\((.*?)\)/gi);
+    ctx.telegram
+      .getFileLink(ctx.update.message.audio.file_id)
+      .then(res => {
+        axios
+          .get(res.href, {
+            responseType: "arraybuffer",
+          })
+          .then((file) => NodeID3.read(file.data))
+          .then(fileInfo => {
+            const remixLabel = getRemixLabel(fileInfo);
+            const bestLabel = getBestLabel(ctx);
+            const matchRemixerArtist = fileInfo.title.match(/\((.*?)\)/gi);
+            const remixerArtist = getRemixerArtist(matchRemixerArtist);
+            const artists = getArtists(fileInfo, remixerArtist);
+            const genre = fileInfo.genre ? `\nСтиль: #${getGenre(fileInfo.genre)}` : '';
 
-          const remixerArtist = matchRemixerArtist
-            ? matchRemixerArtist[0]
-              .replaceAll(/\(|\)/gi, '')
-              .split(/\s|, |\&|feat|feat./)
-              .filter(word => word.toLowerCase() !== 'remix')
-            : [];
-
-          const artists = fileInfo.artist
-            .split(/\&|feat|feat.|, /)
-            .concat(remixerArtist)
-            .map(artist => `#${artist.trim().replaceAll(/\W|\s/gi, '')}`)
-            .join(' ');
-
-          const genre = fileInfo.genre
-            ? `\nСтиль: #${getGenre(fileInfo.genre)}`
-            : '';
-
-          ctx.telegram.sendAudio(ctx.chat.id, ctx.update.message.audio.file_id, {
-            caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
+            ctx.telegram.sendAudio(
+              ctx.chat.id,
+              ctx.update.message.audio.file_id,
+              {
+                caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
+              },
+            );
           });
-        });
-    });
+      })
+      .catch((e) => {
+        ctx.telegram.sendMessage(ctx.chat.id, 'Что-то пошло не так. Попробуйте ещё раз или повторите позже.');
+        console.log(`Произошла ошибка: ${e.message}`);
+      });
 });
 
-bot.launch();
+launchBot();
