@@ -17,6 +17,9 @@ const getGenre = (genre) => {
     case '(127)':
       result = 'DrumBass';
       break;
+    case '(26)':
+      result = 'Ambient';
+      break;
     default:
       result = genre;
   }
@@ -49,7 +52,7 @@ const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
 const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
   .split(/\&|feat|feat.|, /)
   .concat(remixerArtist)
-  .map(artist => `#${artist.trim().replaceAll(/\W|\s/gi, '')}`)
+  .map(artist => `#${artist.trim().replaceAll(/[^\wа-я]|\s/giu, '')}`)
   .join(' ');
 
 bot.on('message', (ctx) => {
