@@ -56,45 +56,75 @@ const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
   .join(' ');
 
 bot.on('message', (ctx) => {
-  if (ctx.update.message.text === '/start') {
-    ctx.telegram.sendMessage(ctx.chat.id, 'Добавьте аудио файлы.');
+  const {
+    telegram,
+    chat: {
+      id: chatId
+    },
+    update: {
+      message: {
+        audio,
+        text: messageText
+      }
+    }
+  } = ctx;
+
+  if (messageText === '/start') {
+    telegram.sendMessage(chatId, 'Добавьте аудио файлы.');
     return;
   }
 
-  if (!ctx.update.message.audio) {
-    ctx.telegram.sendMessage(ctx.chat.id, 'Неверная команда');
+  if (!audio) {
+    telegram.sendMessage(chatId, 'Неверная команда');
     return;
   }
 
-    ctx.telegram
-      .getFileLink(ctx.update.message.audio.file_id)
-      .then(res => {
-        axios
-          .get(res.href, {
-            responseType: "arraybuffer",
-          })
-          .then((file) => NodeID3.read(file.data))
-          .then(fileInfo => {
-            const remixLabel = getRemixLabel(fileInfo);
-            const bestLabel = getBestLabel(ctx);
-            const matchRemixerArtist = fileInfo.title.match(/\((.*?)\)/gi);
-            const remixerArtist = getRemixerArtist(matchRemixerArtist);
-            const artists = getArtists(fileInfo, remixerArtist);
-            const genre = fileInfo.genre ? `\nСтиль: #${getGenre(fileInfo.genre)}` : '';
+  ctx.telegram
+    .getFileLink(audio.file_id)
+    .then(res => {
+      axios
+        .get(res.href, {
+          responseType: "arraybuffer",
+        })
+        .then(
+          (file) => NodeID3.read(file.data),
+        )
+        .then(fileInfo => {
+          const {
+            title,
+            artist,
+            genre: fileInfoGenre
+          } = fileInfo;
 
-            ctx.telegram.sendAudio(
-              ctx.chat.id,
-              ctx.update.message.audio.file_id,
-              {
-                caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
-              },
-            );
+          const remixLabel = getRemixLabel(fileInfo);
+          const bestLabel = getBestLabel(ctx);
+          const matchRemixerArtist = title.match(/\((.*?)\)/gi);
+          const remixerArtist = getRemixerArtist(matchRemixerArtist);
+          const artists = getArtists(fileInfo, remixerArtist);
+          const genre = fileInfoGenre ? `\nСтиль: #${getGenre(fileInfoGenre)}` : '';
+
+          telegram.sendAudio(
+            chatId,
+            audio.file_id,
+            {
+              caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
+            },
+          )
+          .then(
+            () => console.log(`"${artist} - ${title}" для публикации успешно создано`),
+          )
+          .catch((e) => {
+            const msgError = `Произошла ошибка при обработке: ${e.message}`;
+
+            console.error(msgError);
+            telegram.sendMessage(chatId, msgError);
           });
-      })
-      .catch((e) => {
-        ctx.telegram.sendMessage(ctx.chat.id, 'Что-то пошло не так. Попробуйте ещё раз или повторите позже.');
-        console.log(`Произошла ошибка: ${e.message}`);
-      });
+        });
+    })
+    .catch((e) => {
+      telegram.sendMessage(chatId, 'Что-то пошло не так. Попробуйте ещё раз или повторите позже.');
+      console.error(`Произошла ошибка: ${e.message}`);
+    });
 });
 
 launchBot();
