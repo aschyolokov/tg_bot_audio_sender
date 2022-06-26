@@ -45,8 +45,8 @@ const getBestLabel = (ctx) => ctx.update.message.caption?.includes('/best')
 const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
   ? matchRemixerArtist[0]
     .replaceAll(/\(|\)/gi, '')
-    .split(/\s|, |\&|feat|feat./)
-    .filter(word => word.toLowerCase() !== 'remix')
+    .split(/,\s|\&|feat|feat.|\s[R|r]emix/)
+    .filter(word => word !== '')
   : [];
 
 const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
