@@ -12,5 +12,6 @@
     "node-id3": "^0.2.3",
     "nodemon": "^2.0.15",
     "telegraf": "^4.4.2"
-  }
+  },
+  "packageManager": "yarn@3.2.2"
 }
