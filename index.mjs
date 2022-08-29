@@ -11,14 +11,17 @@ const getGenre = (genre) => {
   let result = '';
 
   switch (genre) {
+    case '(7)':
+      result = 'HipHop';
+      break;
     case '(18)':
       result = 'Techno';
       break;
-    case '(127)':
-      result = 'DrumBass';
-      break;
     case '(26)':
       result = 'Ambient';
+      break;
+    case '(127)':
+      result = 'DrumBass';
       break;
     default:
       result = genre;
