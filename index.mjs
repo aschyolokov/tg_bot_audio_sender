@@ -37,10 +37,16 @@ const getGenre = (genre) => {
 };
 
 const launchBot = () => {
-  bot
-    .launch()
-    .then(() => console.log('Бот запущен!'))
-    .catch((e) => console.log(`Бот не запущен. Произошла ошибка: ${e.message}`));
+  try {
+    console.log('Бот запущен!');
+
+    bot.launch();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(`Бот не запущен. Произошла ошибка: ${error.message}`);
+      return;
+    }
+  }
 };
 
 const getRemixLabel = (fileInfo) => fileInfo.title.toLowerCase().includes('remix')
@@ -110,7 +116,8 @@ bot.on('message', (ctx) => {
           const matchRemixerArtist = title.match(/\((.*?)\)/gi);
           const remixerArtist = getRemixerArtist(matchRemixerArtist);
           const artists = getArtists(fileInfo, remixerArtist);
-          const genre = fileInfoGenre ? `\nСтиль: #${getGenre(fileInfoGenre)}` : '';
+          const normalizedGenre = `Стиль: #${getGenre(fileInfoGenre)}`;
+          const genre = fileInfoGenre ? `\n${normalizedGenre}` : '';
 
           telegram.sendAudio(
             chatId,
@@ -120,7 +127,7 @@ bot.on('message', (ctx) => {
             },
           )
           .then(
-            () => console.log(`"${artist} - ${title}" для публикации успешно создано`),
+            () => console.log(`"${artist} - ${title} (${normalizedGenre})" для публикации готов.`),
           )
           .catch((e) => {
             const msgError = `Произошла ошибка при обработке: ${e.message}`;
