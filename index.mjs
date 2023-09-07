@@ -20,6 +20,12 @@ const getGenre = (genre) => {
     case '(26)':
       result = 'Ambient';
       break;
+    case '(31)':
+      result = 'Trance';
+      break;
+    case '(35)':
+      result = 'House';
+      break;
     case '(127)':
       result = 'DrumBass';
       break;
@@ -48,12 +54,12 @@ const getBestLabel = (ctx) => ctx.update.message.caption?.includes('/best')
 const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
   ? matchRemixerArtist[0]
     .replaceAll(/\(|\)/gi, '')
-    .split(/,\s|\&|feat[.]|vs[.]|\s[R|r]emix/)
+    .split(/,\s|\&|ft[.]|feat[.]|vs[.]|\s[R|r]emix/)
     .filter(word => word !== '')
   : [];
 
 const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
-  .split(/\&|feat[.]|vs[.]|, /)
+  .split(/\&|ft[.]|feat[.]|vs[.]|, /)
   .concat(remixerArtist)
   .map(artist => `#${artist.trim().replaceAll(/[^\wа-я]|\s/giu, '')}`)
   .join(' ');
