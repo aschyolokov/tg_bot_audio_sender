@@ -54,7 +54,7 @@ const getRemixLabel = (fileInfo) => fileInfo.title.toLowerCase().includes('remix
   : '';
 
 const getBestLabel = (ctx) => ctx.update.message.caption?.includes('/best')
-  ? '\n🔥#BEST'
+  ? '\n🔥 #BEST'
   : '';
 
 const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
@@ -64,7 +64,7 @@ const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
     .filter(word => word !== '')
   : [];
 
-const getArtists = (fileInfo, remixerArtist) => fileInfo.artist
+const getArtistsWithHash = (fileInfo, remixerArtist) => fileInfo.artist
   .split(/\&|ft[.]|feat[.]|vs[.]|, /)
   .concat(remixerArtist)
   .map(artist => `#${artist.trim().replaceAll(/[^\wа-я]|\s/giu, '')}`)
@@ -99,7 +99,7 @@ bot.on('message', (ctx) => {
     .then(res => {
       axios
         .get(res.href, {
-          responseType: "arraybuffer",
+          responseType: 'arraybuffer',
         })
         .then(
           (file) => NodeID3.read(file.data),
@@ -115,7 +115,8 @@ bot.on('message', (ctx) => {
           const bestLabel = getBestLabel(ctx);
           const matchRemixerArtist = title.match(/\((.*?)\)/gi);
           const remixerArtist = getRemixerArtist(matchRemixerArtist);
-          const artists = getArtists(fileInfo, remixerArtist);
+          const artistsWithHash = `Исполнитель: ${getArtistsWithHash(fileInfo, remixerArtist)}`;
+          const trackName = `Название: ${title}`;
           const normalizedGenre = `Стиль: #${getGenre(fileInfoGenre)}`;
           const genre = fileInfoGenre ? `\n${normalizedGenre}` : '';
 
@@ -123,7 +124,7 @@ bot.on('message', (ctx) => {
             chatId,
             audio.file_id,
             {
-              caption: `${bestLabel}${remixLabel}\nИсполнитель: ${artists}${genre}`,
+              caption: `${bestLabel}${remixLabel}\n${artistsWithHash}\n${trackName}${genre}`,
             },
           )
           .then(
