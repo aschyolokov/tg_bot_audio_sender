@@ -32,10 +32,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@telegraf/types@npm:^6.8.1":
-  version: 6.8.1
-  resolution: "@telegraf/types@npm:6.8.1"
-  checksum: 4d111605fbef4529475bee9df5796e1b2b1e3b5a4c94d848908b3284e41f615a90d7e9a56c557ed488d606a99a507cd8eac2300599475fcb4c808e08b995b665
+"@telegraf/types@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@telegraf/types@npm:7.1.0"
+  checksum: c0cceb5e043f4c4bdba50d2614145751156864c60c775969ff0e8a984ccc222fbcba560c5249e86c205e776ab63401b5b979db8a28cd77ae655c63f23e7a2e6b
   languageName: node
   linkType: hard
 
@@ -133,14 +133,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "axios@npm:1.5.0"
+"axios@npm:^1.7.9":
+  version: 1.7.9
+  resolution: "axios@npm:1.7.9"
   dependencies:
-    follow-redirects: ^1.15.0
+    follow-redirects: ^1.15.6
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
-  checksum: e7405a5dbbea97760d0e6cd58fecba311b0401ddb4a8efbc4108f5537da9b3f278bde566deb777935a960beec4fa18e7b8353881f2f465e4f2c0e949fead35be
+  checksum: cb8ce291818effda09240cb60f114d5625909b345e10f389a945320e06acf0bc949d0f8422d25720f5dd421362abee302c99f5e97edec4c156c8939814b23d19
   languageName: node
   linkType: hard
 
@@ -313,12 +313,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^3.2.7":
-  version: 3.2.7
-  resolution: "debug@npm:3.2.7"
+"debug@npm:^4":
+  version: 4.4.0
+  resolution: "debug@npm:4.4.0"
   dependencies:
-    ms: ^2.1.1
-  checksum: b3d8c5940799914d30314b7c3304a43305fd0715581a919dacb8b3176d024a782062368405b47491516d2091d6462d4d11f2f4974a405048094f8bfebfa3071c
+    ms: ^2.1.3
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: fb42df878dd0e22816fc56e1fdca9da73caa85212fbe40c868b1295a6878f9101ae684f4eeef516c13acfc700f5ea07f1136954f43d4cd2d477a811144136479
   languageName: node
   linkType: hard
 
@@ -343,10 +346,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.3.1":
-  version: 16.3.1
-  resolution: "dotenv@npm:16.3.1"
-  checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
+"dotenv@npm:^16.4.7":
+  version: 16.4.7
+  resolution: "dotenv@npm:16.4.7"
+  checksum: c27419b5875a44addcc56cc69b7dc5b0e6587826ca85d5b355da9303c6fc317fc9989f1f18366a16378c9fdd9532d14117a1abe6029cc719cdbbef6eaef2cea4
   languageName: node
   linkType: hard
 
@@ -396,13 +399,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.0":
-  version: 1.15.2
-  resolution: "follow-redirects@npm:1.15.2"
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.9
+  resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: faa66059b66358ba65c234c2f2a37fcec029dc22775f35d9ad6abac56003268baf41e55f9ee645957b32c7d9f62baf1f0b906e68267276f54ec4b4c597c2b190
+  checksum: 859e2bacc7a54506f2bf9aacb10d165df78c8c1b0ceb8023f966621b233717dab56e8d08baadc3ad3b9db58af290413d585c999694b7c146aaf2616340c3d2a6
   languageName: node
   linkType: hard
 
@@ -852,7 +855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:^2.0.0, ms@npm:^2.1.1":
+"ms@npm:^2.0.0, ms@npm:^2.1.3":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
@@ -866,7 +869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.8":
+"node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -909,12 +912,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "nodemon@npm:3.0.1"
+"nodemon@npm:^3.1.9":
+  version: 3.1.9
+  resolution: "nodemon@npm:3.1.9"
   dependencies:
     chokidar: ^3.5.2
-    debug: ^3.2.7
+    debug: ^4
     ignore-by-default: ^1.0.1
     minimatch: ^3.1.2
     pstree.remy: ^1.1.8
@@ -925,7 +928,7 @@ __metadata:
     undefsafe: ^2.0.5
   bin:
     nodemon: bin/nodemon.js
-  checksum: 6a5d81855760d6617049eccce10ccf02bddb482dab13ceea5280ae595ec7004eee13e7b934368e3f46c37fe4d970342a8c38c99cae7e93e4d7a3ed1c1ecb6acf
+  checksum: d045065dea08904f1356d18132538e71a61df12cb4e2852730310492943676d4789bedb28c343a5d85d5e07558bf47b73f000a8017409f0b7d522a3c1c42b2e5
   languageName: node
   linkType: hard
 
@@ -1242,21 +1245,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"telegraf@npm:^4.13.1":
-  version: 4.13.1
-  resolution: "telegraf@npm:4.13.1"
+"telegraf@npm:^4.16.3":
+  version: 4.16.3
+  resolution: "telegraf@npm:4.16.3"
   dependencies:
-    "@telegraf/types": ^6.8.1
+    "@telegraf/types": ^7.1.0
     abort-controller: ^3.0.0
     debug: ^4.3.4
     mri: ^1.2.0
-    node-fetch: ^2.6.8
+    node-fetch: ^2.7.0
     p-timeout: ^4.1.0
     safe-compare: ^1.1.4
     sandwich-stream: ^2.0.2
   bin:
     telegraf: lib/cli.mjs
-  checksum: 8f8a31e2fdf55f1c3218ee02cbfd97e16bd4ba5dfdd7c7ba2b3678b2c674f53f1056fb8a624c56c7999c0705c814cf3b40333ae31ea1ca57a9396cb45527cea1
+  checksum: e24e1679849e6dcba9d58e932bb441a0c83b183e1a63b951e37635e4e32b9f96824f4bcaa48a9de1a8f92a0bf3afd2734475f0d4f7b4210d5b5f1f169e55c78d
   languageName: node
   linkType: hard
 
@@ -1264,11 +1267,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "tg_bot@workspace:."
   dependencies:
-    axios: ^1.5.0
-    dotenv: ^16.3.1
+    axios: ^1.7.9
+    dotenv: ^16.4.7
     node-id3: ^0.2.6
-    nodemon: ^3.0.1
-    telegraf: ^4.13.1
+    nodemon: ^3.1.9
+    telegraf: ^4.16.3
   languageName: unknown
   linkType: soft
 
