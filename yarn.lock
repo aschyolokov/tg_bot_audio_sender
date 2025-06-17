@@ -133,14 +133,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.7.9":
-  version: 1.7.9
-  resolution: "axios@npm:1.7.9"
+"axios@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "axios@npm:1.10.0"
   dependencies:
     follow-redirects: ^1.15.6
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
-  checksum: cb8ce291818effda09240cb60f114d5625909b345e10f389a945320e06acf0bc949d0f8422d25720f5dd421362abee302c99f5e97edec4c156c8939814b23d19
+  checksum: b5fd840d499469bf968e44b8ac96f4b363c6aa4c791a50834c086a7cffbc2d77fe24f27af1aba46c3e1f4840aaf991461fc27537990596b93dea0f4df3245a86
   languageName: node
   linkType: hard
 
@@ -346,10 +346,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.4.7":
-  version: 16.4.7
-  resolution: "dotenv@npm:16.4.7"
-  checksum: c27419b5875a44addcc56cc69b7dc5b0e6587826ca85d5b355da9303c6fc317fc9989f1f18366a16378c9fdd9532d14117a1abe6029cc719cdbbef6eaef2cea4
+"dotenv@npm:^16.5.0":
+  version: 16.5.0
+  resolution: "dotenv@npm:16.5.0"
+  checksum: 6543fe87b5ddf2d60dd42df6616eec99148a5fc150cb4530fef5bda655db5204a3afa0e6f25f7cd64b20657ace4d79c0ef974bec32fdb462cad18754191e7a90
   languageName: node
   linkType: hard
 
@@ -903,18 +903,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-id3@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "node-id3@npm:0.2.6"
+"node-id3@npm:^0.2.9":
+  version: 0.2.9
+  resolution: "node-id3@npm:0.2.9"
   dependencies:
     iconv-lite: 0.6.2
-  checksum: 9f3ba9d42f4d52348bb2f88dbcdd63ee8fd513dc7c01481d6b10082b83d0f1ce696f920c9bff0e3f2b00486c25fe49c3f93a56d54813809b7edc9ab14b1383d6
+  checksum: 0f34f4e057994da4945f3c9a893cf72c54346de5ba13144a7568999e44a5c346759ec386c69d756cd41f66398a6f7d01a15aaab649118b29cd6c80c0fe621f42
   languageName: node
   linkType: hard
 
-"nodemon@npm:^3.1.9":
-  version: 3.1.9
-  resolution: "nodemon@npm:3.1.9"
+"nodemon@npm:^3.1.10":
+  version: 3.1.10
+  resolution: "nodemon@npm:3.1.10"
   dependencies:
     chokidar: ^3.5.2
     debug: ^4
@@ -928,7 +928,7 @@ __metadata:
     undefsafe: ^2.0.5
   bin:
     nodemon: bin/nodemon.js
-  checksum: d045065dea08904f1356d18132538e71a61df12cb4e2852730310492943676d4789bedb28c343a5d85d5e07558bf47b73f000a8017409f0b7d522a3c1c42b2e5
+  checksum: cdd2bcae3ad810fcc0f00a01ed3b0addb76a1328ee024e483cdcadfab7eed2d24964e3feaf7e6c83895ad6154379d5403ffcf762a87841158fd3514c50ea9ef8
   languageName: node
   linkType: hard
 
@@ -1267,10 +1267,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "tg_bot@workspace:."
   dependencies:
-    axios: ^1.7.9
-    dotenv: ^16.4.7
-    node-id3: ^0.2.6
-    nodemon: ^3.1.9
+    axios: ^1.10.0
+    dotenv: ^16.5.0
+    node-id3: ^0.2.9
+    nodemon: ^3.1.10
     telegraf: ^4.16.3
   languageName: unknown
   linkType: soft
