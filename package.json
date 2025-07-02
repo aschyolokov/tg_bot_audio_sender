@@ -7,8 +7,8 @@
     "start": "nodemon index.mjs"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.45.2",
     "axios": "^1.10.0",
-    "dotenv": "^16.5.0",
     "node-id3": "^0.2.9",
     "nodemon": "^3.1.10",
     "telegraf": "^4.16.3"

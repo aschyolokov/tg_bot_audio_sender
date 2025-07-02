@@ -1,147 +1,125 @@
 import axios from 'axios';
-import { Telegraf } from 'telegraf';
 import NodeID3 from 'node-id3';
-import dotenv from 'dotenv';
+import dotenvx from '@dotenvx/dotenvx';
 
-dotenv.config();
+import { Telegraf } from 'telegraf';
+import { message } from 'telegraf/filters';
+
+dotenvx.config();
 
 const bot = new Telegraf(process.env.TG_BOT_TOKEN);
 
-const getGenre = (genre) => {
-  let result = '';
+const GENRE_MAP = new Map([
+  ['(7)', 'HipHop'],
+  ['(18)', 'Techno'],
+  ['(26)', 'Ambient'],
+  ['(31)', 'Trance'],
+  ['(35)', 'House'],
+  ['(127)', 'DrumBass'],
+]);
 
-  switch (genre) {
-    case '(7)':
-      result = 'HipHop';
-      break;
-    case '(18)':
-      result = 'Techno';
-      break;
-    case '(26)':
-      result = 'Ambient';
-      break;
-    case '(31)':
-      result = 'Trance';
-      break;
-    case '(35)':
-      result = 'House';
-      break;
-    case '(127)':
-      result = 'DrumBass';
-      break;
-    default:
-      result = genre;
+const ARTIST_SPLIT_REGEX = /&|ft\.?|feat\.?|vs\.?|,\s*/i;
+const REMIXER_SPLIT_REGEX = /,\s*|&|ft\.?|feat\.?|vs\.?|\s*[Rr]emix/i;
+const HASHTAG_CLEANUP_REGEX = /[^\p{L}\p{N}_]/gu; // Удаляет все, кроме букв, цифр и _ (с поддержкой Unicode)
+
+/**
+ * Получает название жанра по его коду.
+ * @param {string} genreCode - Код жанра, например, '(7)'.
+ * @returns {string} Очищенное название жанра, например, 'HipHop'.
+ */
+const getGenre = (genreCode) => {
+  const genre = GENRE_MAP.get(genreCode) || genreCode;
+  return genre.replace(/\s|&/g, '');
+};
+
+/**
+ * Извлекает имена ремиксеров из названия трека.
+ * @param {string} title - Название трека.
+ * @returns {string[]} Массив имен ремиксеров.
+ */
+const getRemixerArtists = (title) => {
+  const remixerMatch = title.match(/\((.*?)\)/);
+
+  if (!remixerMatch || !remixerMatch[1]) {
+    return [];
   }
 
-  return result.split(/\s|\&/).join('');
+  return remixerMatch[1]
+    .split(REMIXER_SPLIT_REGEX)
+    .map(artist => artist.trim())
+    .filter(Boolean);
 };
+
+/**
+ * Создает строку с хэштегами для всех исполнителей.
+ * @param {string} mainArtists - Строка с основными исполнителями.
+ * @param {string[]} remixerArtists - Массив ремиксеров.
+ * @returns {string} Строка с хэштегами, например, '#Artist1 #Artist2 #Remixer1'.
+ */
+const getArtistsHashtags = (mainArtists, remixerArtists) => {
+  const allArtists = [
+    ...mainArtists.split(ARTIST_SPLIT_REGEX),
+    ...remixerArtists
+  ];
+
+  return allArtists
+    .map(artist => `#${artist.trim().replace(HASHTAG_CLEANUP_REGEX, '')}`)
+    .join(' ');
+};
+
+bot.start((ctx) => {
+  ctx.reply('Привет! Отправь мне аудиофайл, и я отформатирую его описание.');
+});
+
+bot.on(message('audio'), async (ctx) => {
+  const { audio, caption: originalCaption } = ctx.message;
+
+  try {
+    const link = await ctx.telegram.getFileLink(audio.file_id);
+    const response = await axios.get(link.href, { responseType: 'arraybuffer' });
+    const tags = NodeID3.read(response.data);
+
+    if (!tags || !tags.artist || !tags.title) {
+      await ctx.reply('Не удалось прочитать метаданные (ID3 теги) из этого файла.');
+
+      return;
+    }
+
+    const { title, artist, genre: genreCode } = tags;
+
+    const bestLabel = originalCaption?.toLowerCase().includes('/best') ? '🔥 #BEST\n' : '';
+    const remixLabel = title.toLowerCase().includes('remix') ? '🎛 #REMIX\n' : '';
+
+    const remixerArtists = getRemixerArtists(title);
+    const artistsHashtags = getArtistsHashtags(artist, remixerArtists);
+    const genreHashtag = genreCode ? `Стиль: #${getGenre(genreCode)}` : '';
+
+    const finalCaption = `${bestLabel}${remixLabel}Исполнитель: ${artistsHashtags}\nНазвание: ${title}\n${genreHashtag}`;
+
+    await ctx.replyWithAudio(audio.file_id, { caption: finalCaption });
+
+    console.log(`Трек "${artist} - ${title} (${genreHashtag})" успешно обработан.`);
+  } catch (error) {
+    console.error(`Ошибка при обработке файла: ${error.message}`);
+    await ctx.reply('Произошла ошибка при обработке вашего файла. Пожалуйста, попробуйте еще раз.');
+  }
+});
+
+bot.on('message', (ctx) => {
+  ctx.reply('Пожалуйста, отправьте аудиофайл.');
+});
 
 const launchBot = () => {
   try {
-    console.log('Бот запущен!');
-
-    bot.launch();
+    bot.launch(() => console.log('Бот успешно запущен!'));
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(`Бот не запущен. Произошла ошибка: ${error.message}`);
-      return;
-    }
+    console.error(`Не удалось запустить бота: ${error.message}`);
+    process.exit(1);
   }
 };
 
-const getRemixLabel = (fileInfo) => fileInfo.title.toLowerCase().includes('remix')
-  ? '\n🎛 #REMIX'
-  : '';
-
-const getBestLabel = (ctx) => ctx.update.message.caption?.includes('/best')
-  ? '\n🔥 #BEST'
-  : '';
-
-const getRemixerArtist = (matchRemixerArtist) => matchRemixerArtist
-  ? matchRemixerArtist[0]
-    .replaceAll(/\(|\)/gi, '')
-    .split(/,\s|\&|ft[.]|feat[.]|vs[.]|\s[R|r]emix/)
-    .filter(word => word !== '')
-  : [];
-
-const getArtistsWithHash = (fileInfo, remixerArtist) => fileInfo.artist
-  .split(/\&|ft[.]|feat[.]|vs[.]|, /)
-  .concat(remixerArtist)
-  .map(artist => `#${artist.trim().replaceAll(/[^\wа-я]|\s/giu, '')}`)
-  .join(' ');
-
-bot.on('message', (ctx) => {
-  const {
-    telegram,
-    chat: {
-      id: chatId
-    },
-    update: {
-      message: {
-        audio,
-        text: messageText
-      }
-    }
-  } = ctx;
-
-  if (messageText === '/start') {
-    telegram.sendMessage(chatId, 'Добавьте аудио файлы.');
-    return;
-  }
-
-  if (!audio) {
-    telegram.sendMessage(chatId, 'Неверная команда');
-    return;
-  }
-
-  ctx.telegram
-    .getFileLink(audio.file_id)
-    .then(res => {
-      axios
-        .get(res.href, {
-          responseType: 'arraybuffer',
-        })
-        .then(
-          (file) => NodeID3.read(file.data),
-        )
-        .then(fileInfo => {
-          const {
-            title,
-            artist,
-            genre: fileInfoGenre
-          } = fileInfo;
-
-          const remixLabel = getRemixLabel(fileInfo);
-          const bestLabel = getBestLabel(ctx);
-          const matchRemixerArtist = title.match(/\((.*?)\)/gi);
-          const remixerArtist = getRemixerArtist(matchRemixerArtist);
-          const artistsWithHash = `Исполнитель: ${getArtistsWithHash(fileInfo, remixerArtist)}`;
-          const trackName = `Название: ${title}`;
-          const normalizedGenre = `Стиль: #${getGenre(fileInfoGenre)}`;
-          const genre = fileInfoGenre ? `\n${normalizedGenre}` : '';
-
-          telegram.sendAudio(
-            chatId,
-            audio.file_id,
-            {
-              caption: `${bestLabel}${remixLabel}\n${artistsWithHash}\n${trackName}${genre}`,
-            },
-          )
-          .then(
-            () => console.log(`"${artist} - ${title} (${normalizedGenre})" для публикации готов.`),
-          )
-          .catch((e) => {
-            const msgError = `Произошла ошибка при обработке: ${e.message}`;
-
-            console.error(msgError);
-            telegram.sendMessage(chatId, msgError);
-          });
-        });
-    })
-    .catch((e) => {
-      telegram.sendMessage(chatId, 'Что-то пошло не так. Попробуйте ещё раз или повторите позже.');
-      console.error(`Произошла ошибка: ${e.message}`);
-    });
-});
-
 launchBot();
+
+// Глобальный обработчик ошибок для бота
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
